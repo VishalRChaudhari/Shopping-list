@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shoppinglistapp/data/categories.dart';
+import 'package:shoppinglistapp/models/Grocery_Item.dart';
 import 'package:shoppinglistapp/models/category.dart';
 
 import 'package:http/http.dart' as http;
@@ -27,7 +28,7 @@ class _NewItemState extends State<NewItem> {
           'shopping-list-7e9e1-default-rtdb.asia-southeast1.firebasedatabase.app',
           'shopping-list.json');
 
-     final response = await http.post(
+      final response = await http.post(
         url,
         headers: {'content-type': 'application/json'},
         body: json.encode(
@@ -38,11 +39,17 @@ class _NewItemState extends State<NewItem> {
           },
         ),
       );
+      final Map<String, dynamic> resdata = json.decode(response.body);
 
-      if(!context.mounted){
+      if (!context.mounted) {
         return;
       }
-      Navigator.of(context).pop( );
+      Navigator.of(context).pop(GroceryItem(
+        id: resdata['name'],
+        name: _enteredName,
+        quantity: _enteredQuantity,
+        category: _selectedcategory!,
+      ));
     }
   }
 
