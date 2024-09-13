@@ -19,7 +19,7 @@ class _NewItemState extends State<NewItem> {
   var _enteredQuantity = 1;
   var _selectedcategory = categories[Categories.vegetables];
 
-  void _onsave() {
+  void _onsave() async {
     if (_formkey.currentState!.validate()) {
       _formkey.currentState!.save();
 
@@ -27,7 +27,7 @@ class _NewItemState extends State<NewItem> {
           'shopping-list-7e9e1-default-rtdb.asia-southeast1.firebasedatabase.app',
           'shopping-list.json');
 
-      http.post(
+     final response = await http.post(
         url,
         headers: {'content-type': 'application/json'},
         body: json.encode(
@@ -38,6 +38,10 @@ class _NewItemState extends State<NewItem> {
           },
         ),
       );
+
+      if(!context.mounted){
+        return;
+      }
       Navigator.of(context).pop( );
     }
   }
