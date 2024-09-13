@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shoppinglistapp/data/categories.dart';
 import 'package:shoppinglistapp/models/Grocery_Item.dart';
 import 'package:shoppinglistapp/widgets/new_item.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,20 +13,46 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<GroceryItem> _groceryItems = [];
+  List<GroceryItem> _groceryItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() async {
+    final url = Uri.https(
+        'shopping-list-7e9e1-default-rtdb.asia-southeast1.firebasedatabase.app',
+        'shopping-list.json');
+    final response = await http.get(url);
+    final Map<String, dynamic> listdata = json.decode(response.body);
+    final List<GroceryItem> _loadedData = [];
+    for (final item in listdata.entries) {
+      final category = categories.entries
+          .firstWhere(
+              (catItem) => catItem.value.title == item.value['Category'])
+          .value;
+
+      _loadedData.add(
+        GroceryItem(
+            id: item.key,
+            name: item.value['name'],
+            quantity: item.value['Quantity'],
+            category: category),
+      );
+    }
+    setState(() {
+      _groceryItems = _loadedData;
+    });
+  }
 
   void _addItem() async {
-    final newItem = await Navigator.of(context).push<GroceryItem>(
+    await Navigator.of(context).push<GroceryItem>(
       MaterialPageRoute(
         builder: (context) => const NewItem(),
       ),
     );
-    if (newItem == null) {
-      return;
-    }
-    setState(() {
-      _groceryItems.add(newItem);
-    });
   }
 
   void _removeItem(GroceryItem item) {
@@ -61,7 +90,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         itemCount: _groceryItems.length,
-        
       );
     }
     return Scaffold(
