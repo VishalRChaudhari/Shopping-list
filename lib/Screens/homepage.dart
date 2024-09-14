@@ -34,6 +34,12 @@ class _HomePageState extends State<HomePage> {
         _error = 'Failed to load the data. Please try again later.';
       });
     }
+    if (response.body == 'null') {
+      setState(() {
+        _isloaded = false;
+      });
+      return;
+    }
     final Map<String, dynamic> listdata = json.decode(response.body);
     final List<GroceryItem> loadedData = [];
 
