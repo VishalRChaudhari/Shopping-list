@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<GroceryItem> _groceryItems = [];
+  var _isloaded = true;
 
   @override
   void initState() {
@@ -44,6 +45,7 @@ class _HomePageState extends State<HomePage> {
     }
     setState(() {
       _groceryItems = _loadedData;
+      _isloaded = false;
     });
   }
 
@@ -73,6 +75,12 @@ class _HomePageState extends State<HomePage> {
     Widget content = const Center(
       child: Text('No Items Added yet.'),
     );
+
+    if (_isloaded) {
+      content = const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
 
     if (_groceryItems.isNotEmpty) {
       content = ListView.builder(
