@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<GroceryItem> _groceryItems = [];
   var _isloaded = true;
+  String? _error;
 
   @override
   void initState() {
@@ -27,8 +28,15 @@ class _HomePageState extends State<HomePage> {
         'shopping-list-7e9e1-default-rtdb.asia-southeast1.firebasedatabase.app',
         'shopping-list.json');
     final response = await http.get(url);
+
+    if (response.statusCode >= 400) {
+      setState(() {
+        _error = 'Failed to load the data. Please try again later.';
+      });
+    }
     final Map<String, dynamic> listdata = json.decode(response.body);
     final List<GroceryItem> loadedData = [];
+
     for (final item in listdata.entries) {
       final category = categories.entries
           .firstWhere(
@@ -105,6 +113,12 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         itemCount: _groceryItems.length,
+      );
+    }
+
+    if (_error != null) {
+      content = Center(
+        child: Text(_error!),
       );
     }
     return Scaffold(
