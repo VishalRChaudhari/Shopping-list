@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shoppinglistapp/data/categories.dart';
-import 'package:shoppinglistapp/models/Grocery_Item.dart';
+import 'package:shoppinglistapp/models/grocery_Item.dart';
 import 'package:shoppinglistapp/models/category.dart';
 
 import 'package:http/http.dart' as http;
@@ -49,6 +49,7 @@ class _NewItemState extends State<NewItem> {
       if (!context.mounted) {
         return;
       }
+      // ignore: use_build_context_synchronously
       Navigator.of(context).pop(GroceryItem(
         id: resdata['name'],
         name: _enteredName,

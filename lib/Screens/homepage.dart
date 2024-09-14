@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shoppinglistapp/data/categories.dart';
-import 'package:shoppinglistapp/models/Grocery_Item.dart';
+import 'package:shoppinglistapp/models/grocery_Item.dart';
 import 'package:shoppinglistapp/widgets/new_item.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,14 +28,14 @@ class _HomePageState extends State<HomePage> {
         'shopping-list.json');
     final response = await http.get(url);
     final Map<String, dynamic> listdata = json.decode(response.body);
-    final List<GroceryItem> _loadedData = [];
+    final List<GroceryItem> loadedData = [];
     for (final item in listdata.entries) {
       final category = categories.entries
           .firstWhere(
               (catItem) => catItem.value.title == item.value['Category'])
           .value;
 
-      _loadedData.add(
+      loadedData.add(
         GroceryItem(
             id: item.key,
             name: item.value['name'],
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
       );
     }
     setState(() {
-      _groceryItems = _loadedData;
+      _groceryItems = loadedData;
       _isloaded = false;
     });
   }
